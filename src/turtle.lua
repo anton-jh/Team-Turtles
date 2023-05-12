@@ -16,17 +16,17 @@ rednet.open("left")
 
 
 Resuming = false
+Args = { ... }
 
-if fs.exists(Filenames.project) and fs.exists(Filenames.state) then
+if fs.exists(Filenames.project) and fs.exists(Filenames.state) and #Args == 0 then
     LoadProject()
     LoadState()
     CompletedSteps = Resume(LoadTurns(), ActivePhase.generateSteps(PhaseArgs))
     Resuming = true
 else
-    local args = { ... }
-    FetchProject(args[1])
+    FetchProject(Args[1])
     PersistProject()
-    AssignedLayer = RequestLayer(Project.serverAddress, Project.projectId, 0)
+    AssignedLayer = RequestLayer()
     InitPhase(Phase.outbound, { from = -1 })
 end
 
