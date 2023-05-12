@@ -15,19 +15,19 @@ end
 
 function MineInfront(nextPhaseIfFull)
     return function ()
-        Mine(nextPhaseIfFull, turtle.inspect, turtle.dig)
+        return Mine(nextPhaseIfFull, turtle.inspect, turtle.dig)
     end
 end
 
 function MineAbove(nextPhaseIfFull)
     return function ()
-        Mine(nextPhaseIfFull, turtle.inspectUp, turtle.digUp)
+        return Mine(nextPhaseIfFull, turtle.inspectUp, turtle.digUp)
     end
 end
 
 function MineBelow(nextPhaseIfFull)
     return function ()
-        Mine(nextPhaseIfFull, turtle.inspectDown, turtle.digDown)
+        return Mine(nextPhaseIfFull, turtle.inspectDown, turtle.digDown)
     end
 end
 
@@ -37,7 +37,7 @@ end
 
 
 function IsInteresting(blockData)
-    return true
+    return blockData.tags["c:ores"]
 end
 
 function CheckInventoryIsFull()
@@ -59,8 +59,8 @@ function Refuel(refuelPosition)
         return turtle.getItemCount() > 0
     end
 
-    local neededFuel
-    neededFuel = neededFuel + Project.assignedLayer * 2
+    local neededFuel = 0
+    neededFuel = neededFuel + AssignedLayer * 2
     neededFuel = neededFuel + Project.width * Project.height / 3
     neededFuel = neededFuel + Project.height * 2
     neededFuel = neededFuel + 10

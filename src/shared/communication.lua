@@ -21,11 +21,23 @@ function Communication.sendRequest(id, msg)
 end
 
 function Communication.requestLayer(serverAddress, projectId, previousLayer)
-    local payload = {
-        message = Communication.messages.requestLayer,
-        previousLayer = previousLayer,
-        projectId = projectId
-    }
+    return AssignedLayer + 1
 
-    return Communication.sendRequest(serverAddress, textutils.serialize(payload))
+    -- local payload = {
+    --     message = Communication.messages.requestLayer,
+    --     previousLayer = previousLayer,
+    --     projectId = projectId
+    -- }
+
+    -- return Communication.sendRequest(serverAddress, textutils.serialize(payload))
+end
+
+function Communication.getProject(serverAddress)
+    return {
+        serverAddress = 1,
+        projectId = 1,
+        width = 10,
+        height = 9,
+        workingSide = "right"
+    }
 end

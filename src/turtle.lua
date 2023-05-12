@@ -8,62 +8,46 @@ require("turtle.phases")
 
 
 
-function JoinProject(serverId)
-    local response = Communication.sendRequest(serverId, Communication.messages.requestLayer)
-    Project = textutils.unserialise(response)
-    Refuel(true)
-    Forward()
-    ActivePhase = Phase.outboundFromHome
-end
-
-
-
 -- MAIN --
 
 
--- Args = {...}
-
--- rednet.open("left")
-
-
--- TODO
--- if Args.n == 1 then
---     JoinProject(Args[1])
--- elseif fs.exists(Filenames.instructions) and fs.exists(Filenames.state) then
---     Resume()
--- else
---     print("No saved state to resume. Enter server ID as an argument to connect to a server.")
---     return
--- end
+rednet.close("left")
+rednet.open("left")
 
 
+Resuming = false
 
-Args = {...}
-
-Project = {
-    serverAddress = nil,
-    projectId = 1,
-    width = Args[1],
-    height = Args[2],
-    workingSide = Args[3] == "right" and WorkingSide.right or WorkingSide.left
-}
-
-AssignedLayer = 1
-
-InitPhase(Phase.outboundFromHome)
+if fs.exists(Filenames.project) and fs.exists(Filenames.state) then
+    LoadProject()
+    LoadState()
+    CompletedSteps = Resume(LoadTurns(), ActivePhase.generateSteps())
+    Resuming = true
+else
+    local args = {...}
+    Project = Communication.getProject(args[1])
+    PersistProject()
+    AssignedLayer = Communication.requestLayer(Project.serverAddress, Project.projectId, 0)
+    Forward()
+    InitPhase(Phase.outboundFromHome)
+end
 
 
 while true do
     local steps = ActivePhase.generateSteps()
-    local nSteps = #steps;
+    local nSteps = #steps
 
-    CompletedSteps = 0
+    if not Resuming then
+        CompletedSteps = 0
+    else
+        Resuming = false
+    end
 
     while CompletedSteps < nSteps do
         local newPhase = steps[CompletedSteps + 1]()
 
         if newPhase then
             InitPhase(newPhase)
+            print(newPhase.name)
             break
         end
 

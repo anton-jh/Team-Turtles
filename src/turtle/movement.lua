@@ -51,7 +51,7 @@ function RecordTurn()
         TurnFile = fs.open(Filenames.turnFile, "w")
     end
 
-    TurnFile.write(tostring(1))
+    TurnFile.write("t")
     HasMovedSinceLastTurn = false
 end
 
@@ -65,6 +65,7 @@ function RecordMove()
     if HasMovedSinceLastTurn then
         return
     end
+    HasMovedSinceLastTurn = true
 
     if TurnFile then
         TurnFile.close()

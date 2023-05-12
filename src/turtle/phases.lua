@@ -5,15 +5,16 @@ Phase = {
     working = { name = "working" },
     backtrackingToHome = { name = "backtrackingToHome" },
     backtrackingToNextLayer = { name = "backtrackingToNextLayer" },
-    emptyAndRefuel = { name = "emptyAndRefuel" }
+    emptyAndRefuel = { name = "emptyAndRefuel" },
+    preOutbound = { name = "preOutBound" }
 }
 
 
 -- GLOBAL FUNCTIONS
 
 
-function Resume(initialFuel, turns, steps)
-    local moves = initialFuel - turtle.getFuelLevel()
+function Resume(turns, steps)
+    local moves = InitialFuel - turtle.getFuelLevel()
 
     local step = 0
 
@@ -39,7 +40,7 @@ function Resume(initialFuel, turns, steps)
         end
     end
 
-    return step + 1
+    return step
 end
 
 function InitPhase(phase)
@@ -56,48 +57,59 @@ end
 
 
 function IsMove(func)
-    return func == Forward or func == Up or func == Down
+    return (func == Forward) or (func == Up) or (func == Down)
 end
 
 function IsTurn(func)
-    return func == Left or func == Right
+    return (func == Left) or (func == Right)
 end
 
-function GenerateBacktrackPhase(doneSteps)
+function GenerateBacktrackPhase(nDoneSteps)
     local steps = {}
+    local doneSteps = {}
 
-    steps:insert(Left)
-    steps:insert(Left)
+    for i, step in ipairs(Phase.working.generateSteps()) do
+        if i > nDoneSteps then
+            break
+        end
 
-    for i = #doneSteps, 1, -1 do
+        table.insert(doneSteps, step)
+    end
+
+    table.insert(steps, Left)
+    table.insert(steps, Left)
+
+    for i = nDoneSteps, 1, -1 do
         local step = doneSteps[i]
 
         if step == Forward then
-            steps:insert(Forward)
+            table.insert(steps, Forward)
         elseif step == Up then
-            steps:insert(Down)
+            table.insert(steps, Down)
         elseif step == Down then
-            steps:insert(Up)
+            table.insert(steps, Up)
         elseif step == Left then
-            steps:insert(Right)
+            table.insert(steps, Right)
         elseif step == Right then
-            steps:insert(Left)
+            table.insert(steps, Left)
         end
     end
+
+    return steps
 end
 
 function GenerateOutboundPhase(from)
     local steps = {}
 
     for _ = from + 1, AssignedLayer do
-        steps:insert(Forward)
+        table.insert(steps, Forward)
     end
 
-    steps:insert(Project.workingSide == WorkingSide.right and Right or Left)
-    steps:insert(Forward)
-    steps:insert(Down)
+    table.insert(steps, Project.workingSide == WorkingSide.right and Right or Left)
+    table.insert(steps, Forward)
+    table.insert(steps, Down)
 
-    steps:insert(function ()
+    table.insert(steps, function ()
         return Phase.working
     end)
 
@@ -132,27 +144,27 @@ function Phase.working.generateSteps()
 
     for y = 1, Project.height / 3 do
         for _ = 1, Project.width - 3 do
-            steps:insert(MineAbove(Phase.backtrackingToHome))
-            steps:insert(MineBelow(Phase.backtrackingToHome))
-            steps:insert(Forward)
+            table.insert(steps, MineAbove(Phase.backtrackingToHome))
+            table.insert(steps, MineBelow(Phase.backtrackingToHome))
+            table.insert(steps, Forward)
         end
 
-        steps:insert(MineAbove(Phase.backtrackingToHome))
-        steps:insert(MineInfront(Phase.backtrackingToHome))
+        table.insert(steps, MineAbove(Phase.backtrackingToHome))
+        table.insert(steps, MineInfront(Phase.backtrackingToHome))
 
         if y < Project.height / 3 then
             for _ = 1, 3 do
-                steps:insert(Down)
-                steps:insert(MineInfront(Phase.backtrackingToHome))
+                table.insert(steps, Down)
+                table.insert(steps, MineInfront(Phase.backtrackingToHome))
             end
-            steps:insert(Left)
-            steps:insert(Left)
+            table.insert(steps, Left)
+            table.insert(steps, Left)
         else
-            steps:insert(MineBelow(Phase.backtrackingToHome))
+            table.insert(steps, MineBelow(Phase.backtrackingToHome))
         end
     end
 
-    steps:insert(function ()
+    table.insert(steps, function ()
         return Phase.backtrackingToNextLayer
     end)
 
@@ -167,10 +179,10 @@ end
 function Phase.backtrackingToHome.generateSteps()
     local steps = GenerateBacktrackPhase(CompletedSteps)
 
-    steps:insert(Forward)
-    steps:insert(Project.workingSide == WorkingSide.right and Left or Right)
+    table.insert(steps, Forward)
+    table.insert(steps, Project.workingSide == WorkingSide.right and Left or Right)
 
-    steps:insert(function ()
+    table.insert(steps, function ()
         return Phase.inbound
     end)
 
@@ -185,16 +197,16 @@ end
 function Phase.backtrackingToNextLayer.generateSteps()
     local steps = GenerateBacktrackPhase(CompletedSteps)
 
-    steps:insert(function ()
+    table.insert(steps, function ()
         PreviousLayer = AssignedLayer
         AssignedLayer = Communication.requestLayer(Project.serverAddress, Project.id, AssignedLayer)
         PersistState()
     end)
-    steps:insert(Up)
-    steps:insert(Forward)
-    steps:insert(Project.workingSide == WorkingSide.right and Right or Left)
+    table.insert(steps, Up)
+    table.insert(steps, Forward)
+    table.insert(steps, Project.workingSide == WorkingSide.right and Right or Left)
 
-    steps:insert(function ()
+    table.insert(steps, function ()
         return Phase.outboundFromLayer
     end)
 
@@ -213,7 +225,7 @@ function Phase.inbound.generateSteps()
         steps[i] = Forward
     end
 
-    steps:insert(function ()
+    table.insert(steps, function ()
         return Phase.emptyAndRefuel
     end)
 
@@ -229,13 +241,31 @@ function Phase.emptyAndRefuel.generateSteps()
     local refuelStep = function ()
         for i = 1, 16 do
             turtle.select(i)
-            Ensure(turtle.dropDown, true, "Cannot empty.", "Emptied successfully.")
+            Ensure(function ()
+                return turtle.getItemCount(i) == 0 or turtle.dropDown()
+            end, true, "Cannot empty.", "Emptied successfully.")
         end
 
         Refuel(RefuelPosition.home)
 
-        return Phase.outboundFromHome
+        return Phase.preOutbound
     end
 
     return { refuelStep }
+end
+
+
+
+-- PRE_OUTBOUND --
+
+
+function Phase.preOutbound.generateSteps()
+    return {
+        Up,
+        Right,
+        Right,
+        function ()
+            return Phase.outboundFromHome
+        end
+    }
 end
