@@ -1,4 +1,4 @@
-require("shared.communication")
+require("turtle.communication")
 require("turtle.globalState")
 require("turtle.persistence")
 require("turtle.misc")
