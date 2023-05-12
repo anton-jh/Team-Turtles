@@ -111,6 +111,7 @@ function Phase.working.generateSteps(_)
         for _ = 1, Project.width - 3 do
             table.insert(steps, MineAbove(backtrackToHome))
             table.insert(steps, MineBelow(backtrackToHome))
+            table.insert(steps, MineInfront(backtrackToHome))
             table.insert(steps, Forward)
         end
 
@@ -119,6 +120,7 @@ function Phase.working.generateSteps(_)
 
         if y < Project.height / 3 then
             for _ = 1, 3 do
+                table.insert(steps, MineBelow(backtrackToHome))
                 table.insert(steps, Down)
                 table.insert(steps, MineInfront(backtrackToHome))
             end

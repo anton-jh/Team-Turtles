@@ -3,28 +3,28 @@
 
 function Forward()
     YieldForTurtle(TurtleInfront)
-    repeat
+    while not turtle.forward() do
         turtle.attack()
         turtle.dig()
-    until turtle.forward()
+    end
     ResetTurnFile()
 end
 
 function Up()
     YieldForTurtle(TurtleAbove)
-    repeat
+    while not turtle.up() do
         turtle.attackUp()
         turtle.digUp()
-    until turtle.up()
+    end
     ResetTurnFile()
 end
 
 function Down()
     YieldForTurtle(TurtleBelow)
-    repeat
+    while not turtle.down() do
         turtle.attackDown()
         turtle.digDown()
-    until turtle.down()
+    end
     ResetTurnFile()
 end
 
