@@ -24,7 +24,7 @@ if fs.exists(Filenames.project) and fs.exists(Filenames.state) then
     Resuming = true
 else
     local args = { ... }
-    Project = GetProject(args[1])
+    FetchProject(args[1])
     PersistProject()
     AssignedLayer = RequestLayer(Project.serverAddress, Project.projectId, 0)
     InitPhase(Phase.outbound, { from = -1 })

@@ -88,8 +88,8 @@ end
 -- COMMUNICATION --
 
 
-function RequestLayer(serverAddress, projectId, previousLayer)
-    return AssignedLayer + 1
+function RequestLayer()
+    AssignedLayer = AssignedLayer + 1
 
     -- local payload = {
     --     message = Communication.messages.requestLayer,
@@ -100,12 +100,12 @@ function RequestLayer(serverAddress, projectId, previousLayer)
     -- return Communication.sendRequest(serverAddress, textutils.serialize(payload))
 end
 
-function GetProject(serverAddress)
-    return {
+function FetchProject(serverAddress)
+    Project = {
         serverAddress = 1,
         projectId = 1,
         width = 10,
         height = 9,
-        workingSide = "right"
+        workingSide = WorkingSide.right
     }
 end
