@@ -82,3 +82,30 @@ function Refuel(refuelPosition)
 
      return true
 end
+
+
+
+-- COMMUNICATION --
+
+
+function RequestLayer(serverAddress, projectId, previousLayer)
+    return AssignedLayer + 1
+
+    -- local payload = {
+    --     message = Communication.messages.requestLayer,
+    --     previousLayer = previousLayer,
+    --     projectId = projectId
+    -- }
+
+    -- return Communication.sendRequest(serverAddress, textutils.serialize(payload))
+end
+
+function GetProject(serverAddress)
+    return {
+        serverAddress = 1,
+        projectId = 1,
+        width = 10,
+        height = 9,
+        workingSide = "right"
+    }
+end

@@ -188,7 +188,7 @@ function Phase.backtracking.generateSteps(args)
         local prevLayer = AssignedLayer
 
         table.insert(steps, function ()
-            AssignedLayer = Communication.requestLayer(Project.serverAddress, Project.id, AssignedLayer)
+            AssignedLayer = RequestLayer(Project.serverAddress, Project.id, AssignedLayer)
             PersistState()
         end)
         table.insert(steps, Up)

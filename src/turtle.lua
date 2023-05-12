@@ -1,4 +1,4 @@
-require("turtle.communication")
+require("shared.communication")
 require("turtle.globalState")
 require("turtle.persistence")
 require("turtle.misc")
@@ -24,9 +24,9 @@ if fs.exists(Filenames.project) and fs.exists(Filenames.state) then
     Resuming = true
 else
     local args = { ... }
-    Project = Communication.getProject(args[1])
+    Project = GetProject(args[1])
     PersistProject()
-    AssignedLayer = Communication.requestLayer(Project.serverAddress, Project.projectId, 0)
+    AssignedLayer = RequestLayer(Project.serverAddress, Project.projectId, 0)
     InitPhase(Phase.outbound, { from = -1 })
 end
 
