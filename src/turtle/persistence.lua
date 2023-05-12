@@ -26,13 +26,14 @@ function LoadProject()
     fileHandle.close()
 end
 
+
 function PersistState()
     local fileHandle = fs.open(Filenames.state, "w")
     local state = {
-        previousLayer = PreviousLayer,
         assignedLayer = AssignedLayer,
         initialFuel = InitialFuel,
         activePhase = ActivePhase.name,
+        phaseArgs = PhaseArgs
     }
     local serializedState = textutils.serialize(state)
 
@@ -47,11 +48,12 @@ function LoadState()
 
     local state = textutils.unserialize(serializedState)
 
-    PreviousLayer = state.previousLayer
     AssignedLayer = state.assignedLayer
     InitialFuel = state.initialFuel
     ActivePhase = Phase[state.activePhase]
+    PhaseArgs = state.phaseArgs
 end
+
 
 function LoadTurns()
     if not fs.exists(Filenames.turnFile) then
@@ -60,6 +62,8 @@ function LoadTurns()
 
     local fileHandle = fs.open(Filenames.turnFile, "r")
     local contents = fileHandle.readAll()
+
+    TurnFile = fs.open(Filenames.turnFile, "r")
 
     return #contents
 end

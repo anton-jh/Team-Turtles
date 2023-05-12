@@ -20,20 +20,19 @@ Resuming = false
 if fs.exists(Filenames.project) and fs.exists(Filenames.state) then
     LoadProject()
     LoadState()
-    CompletedSteps = Resume(LoadTurns(), ActivePhase.generateSteps())
+    CompletedSteps = Resume(LoadTurns(), ActivePhase.generateSteps(PhaseArgs))
     Resuming = true
 else
-    local args = {...}
+    local args = { ... }
     Project = Communication.getProject(args[1])
     PersistProject()
     AssignedLayer = Communication.requestLayer(Project.serverAddress, Project.projectId, 0)
-    Forward()
-    InitPhase(Phase.outboundFromHome)
+    InitPhase(Phase.outbound, { from = -1 })
 end
 
 
 while true do
-    local steps = ActivePhase.generateSteps()
+    local steps = ActivePhase.generateSteps(PhaseArgs)
     local nSteps = #steps
 
     if not Resuming then
@@ -43,10 +42,10 @@ while true do
     end
 
     while CompletedSteps < nSteps do
-        local newPhase = steps[CompletedSteps + 1]()
+        local newPhase, newPhaseArgs = steps[CompletedSteps + 1]()
 
         if newPhase then
-            InitPhase(newPhase)
+            InitPhase(newPhase, newPhaseArgs)
             print(newPhase.name)
             break
         end

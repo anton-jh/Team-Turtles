@@ -1,33 +1,33 @@
 -- MINING, MAIN FUNCTIONS --
 
 
-function Mine(nextPhaseIfFull, inspectFunction, digFunction)
+function Mine(nextPhaseIfFullFunction, inspectFunction, digFunction)
     local any, data = inspectFunction()
 
     if any and IsInteresting(data) then
         if CheckInventoryIsFull() then
-            return nextPhaseIfFull
+            return nextPhaseIfFullFunction()
         end
         digFunction()
     end
 end
 
 
-function MineInfront(nextPhaseIfFull)
+function MineInfront(nextPhaseIfFullFunction)
     return function ()
-        return Mine(nextPhaseIfFull, turtle.inspect, turtle.dig)
+        return Mine(nextPhaseIfFullFunction, turtle.inspect, turtle.dig)
     end
 end
 
-function MineAbove(nextPhaseIfFull)
+function MineAbove(nextPhaseIfFullFunction)
     return function ()
-        return Mine(nextPhaseIfFull, turtle.inspectUp, turtle.digUp)
+        return Mine(nextPhaseIfFullFunction, turtle.inspectUp, turtle.digUp)
     end
 end
 
-function MineBelow(nextPhaseIfFull)
+function MineBelow(nextPhaseIfFullFunction)
     return function ()
-        return Mine(nextPhaseIfFull, turtle.inspectDown, turtle.digDown)
+        return Mine(nextPhaseIfFullFunction, turtle.inspectDown, turtle.digDown)
     end
 end
 

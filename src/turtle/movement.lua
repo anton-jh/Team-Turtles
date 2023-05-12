@@ -7,7 +7,7 @@ function Forward()
         turtle.attack()
         turtle.dig()
     until turtle.forward()
-    RecordMove()
+    ResetTurnFile()
 end
 
 function Up()
@@ -16,7 +16,7 @@ function Up()
         turtle.attackUp()
         turtle.digUp()
     until turtle.up()
-    RecordMove()
+    ResetTurnFile()
 end
 
 function Down()
@@ -25,7 +25,7 @@ function Down()
         turtle.attackDown()
         turtle.digDown()
     until turtle.down()
-    RecordMove()
+    ResetTurnFile()
 end
 
 function Right()
@@ -43,36 +43,22 @@ end
 -- RECORD-KEEPING --
 
 
-TurnFile = nil
-HasMovedSinceLastTurn = false
-
 function RecordTurn()
-    if HasMovedSinceLastTurn then
+    if not TurnFile then
         TurnFile = fs.open(Filenames.turnFile, "w")
     end
 
     TurnFile.write("t")
-    HasMovedSinceLastTurn = false
 end
 
 function ResetTurnFile()
-    if fs.exists(Filenames.turnFile) then
-        fs.delete(Filenames.turnFile)
-    end
-end
-
-function RecordMove()
-    if HasMovedSinceLastTurn then
-        return
-    end
-    HasMovedSinceLastTurn = true
-
     if TurnFile then
         TurnFile.close()
         TurnFile = nil
     end
-
-    ResetTurnFile()
+    if fs.exists(Filenames.turnFile) then
+        fs.delete(Filenames.turnFile)
+    end
 end
 
 

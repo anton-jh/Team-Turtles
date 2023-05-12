@@ -8,14 +8,13 @@ Project = {
 }
 
 -- Persisted
-PreviousLayer = 0
--- Persisted
-AssignedLayer = 0
 
--- Persisted
+AssignedLayer = 0
 InitialFuel = nil
--- Persisted
 ActivePhase = nil
+PhaseArgs = nil
 
 -- Not persisted
+
 CompletedSteps = 0
+TurnFile = nil
