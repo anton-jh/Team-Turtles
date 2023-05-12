@@ -1,6 +1,17 @@
 require("shared.communication")
 
 
+-- MESSAGE HANDLERS --
+
+
+MessageHandler = {
+    [Communication.messages.getProject]
+}
+
+
+
+-- MAIN --
+
 
 if fs.exists("state") then
     local fileHandle = fs.open("state", "r")
@@ -15,5 +26,6 @@ end
 
 while true do
     local id, msg = rednet.receive(Communication.protocol)
-    
+    local payload = textutils.unserialize(msg)
+
 end
