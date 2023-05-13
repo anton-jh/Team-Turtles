@@ -1,4 +1,5 @@
 require("shared.communication")
+require("shared.constants")
 require("turtle.globalState")
 require("turtle.persistence")
 require("turtle.misc")
@@ -24,9 +25,12 @@ if fs.exists(Filenames.project) and fs.exists(Filenames.state) and #Args == 0 th
     CompletedSteps = Resume(LoadTurns(), ActivePhase.generateSteps(PhaseArgs))
     Resuming = true
 else
-    FetchProject(Args[1])
+    if #Args ~= 1 then
+        error("Usage: turtle <serverAddress>")
+    end
+    FetchProject(tonumber(Args[1]))
     PersistProject()
-    AssignedLayer = RequestLayer()
+    RequestLayer()
     InitPhase(Phase.outbound, { from = -1 })
 end
 

@@ -1,11 +1,6 @@
 -- CONSTANTS --
 
 
-WorkingSide = {
-    left = "left",
-    right = "right"
-}
-
 TurtleBlockTag = "computercraft:turtle"
 
 RefuelPosition = {
@@ -22,10 +17,11 @@ MinimumNeededFuel = 200
 
 function Me()
 ---@diagnostic disable-next-line: undefined-field
-    return "TT_" .. os.getComputerID() .. "@" .. Project.serverAddress
+    return "TT_" .. os.getComputerID() .. "@" .. (Project.serverAddress or "_")
 end
 
 function BroadcastError(msg)
+    print("!! " .. msg)
     rednet.broadcast("!! " .. Me() .. ": " .. msg)
 end
 

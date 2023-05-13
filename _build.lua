@@ -38,3 +38,4 @@ end
 
 
 Build("turtle.lua")
+Build("server.lua")

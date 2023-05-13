@@ -89,23 +89,42 @@ end
 
 
 function RequestLayer()
-    AssignedLayer = AssignedLayer + 1
+    local payload = {
+        message = Communication.messages.requestLayer,
+        previousLayer = AssignedLayer,
+        projectId = Project.projectId
+    }
+    local responseRaw = SendRequest(Project.serverAddress, textutils.serialize(payload))
+    local response = textutils.unserialize(responseRaw)
 
-    -- local payload = {
-    --     message = Communication.messages.requestLayer,
-    --     previousLayer = previousLayer,
-    --     projectId = projectId
-    -- }
+    if not response.layer then
+        BroadcastError("Decommissioned.")
+    end
 
-    -- return Communication.sendRequest(serverAddress, textutils.serialize(payload))
+    AssignedLayer = response.layer
+    print("AssignedLayer = " .. AssignedLayer)
 end
 
 function FetchProject(serverAddress)
-    Project = {
-        serverAddress = 1,
-        projectId = 1,
-        width = 10,
-        height = 9,
-        workingSide = WorkingSide.right
+    local payload = {
+        message = Communication.messages.getProject
     }
+    local response = SendRequest(serverAddress, textutils.serialize(payload))
+
+    Project = textutils.unserialize(response)
+    print("Project = " .. textutils.serialize(Project))
+end
+
+
+function SendRequest(id, msg)
+    while true do
+        rednet.send(id, msg, Communication.protocol)
+        local responseId, responseMsg = rednet.receive(Communication.protocol, 10)
+
+        if responseId == id then
+            return responseMsg
+        end
+
+        BroadcastError("Cannot reach '" .. id .. "'.")
+    end
 end
