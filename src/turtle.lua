@@ -12,12 +12,25 @@ require("turtle.phases")
 -- MAIN --
 
 
-rednet.close("left")
-rednet.open("left")
-
-
 Resuming = false
 Args = { ... }
+
+
+for _, side in pairs({
+    "top",
+    "bottom",
+    "left",
+    "right",
+    "front",
+    "back"
+}) do
+    if peripheral.hasType(side, "modem") then
+        rednet.close(side)
+        rednet.open(side)
+        break
+    end
+end
+
 
 if fs.exists(Filenames.project) and fs.exists(Filenames.state) and #Args == 0 then
     LoadProject()
@@ -31,6 +44,7 @@ else
     FetchProject(tonumber(Args[1]))
     PersistProject()
     RequestLayer()
+    Refuel(RefuelPosition.spawn)
     InitPhase(Phase.outbound, { from = -1 })
 end
 

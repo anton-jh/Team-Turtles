@@ -1,5 +1,6 @@
 require("shared.communication")
 require("shared.constants")
+require("shared.utils")
 
 
 
@@ -30,7 +31,7 @@ MessageHandlers = {
     end,
 
     [Communication.messages.requestLayer] = function (payload, id)
-        if payload.projectId ~= State.projectId then
+        if payload.projectId ~= State.project.projectId then
             return {
                 layer = nil
             }
@@ -44,7 +45,9 @@ MessageHandlers = {
 
         local newLayer = #State.layers + 1
         State.layers[newLayer] = id
-        State.layers[payload.previousLayer] = false
+        if payload.previousLayer ~= 0 then
+            State.layers[payload.previousLayer] = false
+        end
         State.turtles[id] = newLayer
         SaveState()
 
@@ -108,15 +111,18 @@ end
 
 
 while true do
-    term.setCursorPos(1, 1)
     term.clear()
 
-    print("---- TeamTurtles Server")
-    print()
-    print(textutils.serialize(State.project))
-    print()
-    for layer, turtleId in pairs(State.layers) do
-        print(layer .. " - " .. (turtleId or "DONE"))
+    WriteCenter("TeamTurtles Server #" .. State.project.serverAddress
+        .. " (" .. State.project.width .. "x" .. State.project.height .. ", " .. State.project.workingSide .. ")", 1)
+
+    print("\n")
+
+    print("Layer - Turtle")
+    for layer, turtleId in ipairs(State.layers) do
+        if layer ~= 0 and turtleId then
+            print(layer .. " - " .. turtleId)
+        end
     end
 
     local id, msg = rednet.receive(Communication.protocol)

@@ -74,13 +74,11 @@ function Refuel(refuelPosition)
 
         if not turtle.refuel() then
             if refuelPosition == RefuelPosition.spawn then
-                return false
+                error("Cannot refuel, non-fuel items in fuel chest!")
             end
             Ensure(turtle.dropDown, true, "Cannot empty.", "Emptied successfully.")
         end
      end
-
-     return true
 end
 
 
