@@ -2,6 +2,8 @@ function Build(filename)
     local mainFile = io.open("src/" .. filename, "r")
     local outputFile = io.open("build/" .. filename, "w")
 
+    outputFile:write("-- ### Evil_Bengt, " .. os.date("%Y-%m-%d %H:%M:%S") .. "\n\n\n")
+
     while true do
         local line = mainFile:read("*line")
         local match = string.find(line, "^require")

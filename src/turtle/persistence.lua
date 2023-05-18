@@ -63,7 +63,7 @@ function LoadTurns()
     local fileHandle = fs.open(Filenames.turnFile, "r")
     local contents = fileHandle.readAll()
 
-    TurnFile = fs.open(Filenames.turnFile, "r")
+    TurnFile = fs.open(Filenames.turnFile, "w")
 
     return #contents
 end
