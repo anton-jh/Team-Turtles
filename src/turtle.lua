@@ -1,14 +1,3 @@
-require("shared.communication")
-require("shared.constants")
-require("turtle.globalState")
-require("turtle.persistence")
-require("turtle.misc")
-require("turtle.core")
-require("turtle.movement")
-require("turtle.phases")
-
-
-
 -- MAIN --
 
 
@@ -16,20 +5,7 @@ Resuming = false
 Args = { ... }
 
 
-for _, side in pairs({
-    "top",
-    "bottom",
-    "left",
-    "right",
-    "front",
-    "back"
-}) do
-    if peripheral.hasType(side, "modem") then
-        rednet.close(side)
-        rednet.open(side)
-        break
-    end
-end
+
 
 
 if fs.exists(Filenames.project) and fs.exists(Filenames.state) and #Args == 0 then

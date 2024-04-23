@@ -1,6 +1,4 @@
-require("shared.communication")
-require("shared.constants")
-require("shared.utils")
+
 
 
 
@@ -15,7 +13,7 @@ State = nil
 
 
 function SaveState()
-    local fileHandle = fs.open("state", "w")
+    local fileHandle = fs.open(Filenames.teamleadState, "w")
     fileHandle.write(textutils.serialize(State))
     fileHandle.close()
 end
@@ -61,6 +59,10 @@ MessageHandlers = {
 
 -- MAIN --
 
+function Server()
+
+end
+
 
 rednet.close("back")
 rednet.open("back")
@@ -68,8 +70,8 @@ rednet.open("back")
 Args = { ... }
 
 
-if fs.exists("state") then
-    local fileHandle = fs.open("state", "r")
+if fs.exists(Filenames.teamleadState) then
+    local fileHandle = fs.open(Filenames.teamleadState, "r")
     State = textutils.unserialize(fileHandle.readAll())
     fileHandle.close()
 end
@@ -105,7 +107,7 @@ if #Args > 0 then
     SaveState()
 end
 
-if not fs.exists("state") and #Args == 0 then
+if not fs.exists(Filenames.teamleadState) and #Args == 0 then
     error("Usage: server <width> <height> <right|left>")
 end
 
