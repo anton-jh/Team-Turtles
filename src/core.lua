@@ -120,6 +120,7 @@ function SendRequest(id, msg)
         local responseId, responseMsg = rednet.receive(Communication.protocol, 10)
         -- TODO: what id? sender or receiver?
         -- TODO: FIX: in teamlead-mode, the request gets received as a response
+        -- possible fix: wait before listening for response (less than the server waits to send response)
 
         if responseId == id then
             return responseMsg
