@@ -7,6 +7,8 @@ require("misc")
 require("core")
 require("movement")
 require("phases")
+require("server")
+require("turtle")
 
 
 
@@ -28,40 +30,23 @@ end
 
 Args = { ... }
 
+TurtleRoutine = nil
+ServerRoutine = nil
+
 if #Args == 0 then
-    ResumeProgram()
+    TurtleRoutine = InitTurtle(nil)
+    ServerRoutine = InitServer(nil)
 elseif #Args == 1 then
-    StartClient(Args[1])
+    TurtleRoutine = InitTurtle(Args[1])
 elseif #Args == 3 then
-    StartServer(Args[1], Args[2], Args[3])
+    TurtleRoutine = InitTurtle(os.getComputerID())
+    ServerRoutine = InitServer(Args)
 end
 
-
-
-
-function ResumeProgram()
-    -- todo figure out if server or client or nothing
-end
-
-function StartClient(arg1)
-    local serverId = tonumber(arg1)
-    if serverId == nil then
-        print("'" .. arg1 .. "' is not a valid server id. Expected positive integer.")
-        return false
-    end
-end
-
-function StartServer(arg1, arg2, arg3)
-    local width = tonumber(arg1)
-    local height = tonumber(arg2)
-    local side = arg3
-
-    if not width or width <= 0 or not height or height <= 0 or (side ~= WorkingSide.right and side ~= WorkingSide.left) then
-        error("Usage: server <width> <height> <right|left>")
-    end
-    if height % 3 ~= 0 then
-        error("Height must be divisible by 3!")
-    end
-
-
+if TurtleRoutine and ServerRoutine then
+    parallel.waitForAny(TurtleRoutine, ServerRoutine)
+elseif TurtleRoutine then
+    TurtleRoutine()
+else
+    error("Could not start. There are probably errors above.")
 end

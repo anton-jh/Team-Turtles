@@ -68,7 +68,7 @@ function Refuel(refuelPosition)
     neededFuel = math.max(neededFuel, MinimumNeededFuel)
 
     turtle.select(1)
-     while turtle.getFuelLevel() < neededFuel do
+    while turtle.getFuelLevel() < neededFuel do
         Ensure(refuelPosition == RefuelPosition.home and suckFuelInfront or suckFuelBelow,
             true, "Cannot refuel.", "Got fuel.")
 
@@ -78,7 +78,7 @@ function Refuel(refuelPosition)
             end
             Ensure(turtle.dropDown, true, "Cannot empty.", "Emptied successfully.")
         end
-     end
+    end
 end
 
 
@@ -118,6 +118,8 @@ function SendRequest(id, msg)
     while true do
         rednet.send(id, msg, Communication.protocol)
         local responseId, responseMsg = rednet.receive(Communication.protocol, 10)
+        -- TODO: what id? sender or receiver?
+        -- TODO: FIX: in teamlead-mode, the request gets received as a response
 
         if responseId == id then
             return responseMsg

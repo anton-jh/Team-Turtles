@@ -5,7 +5,7 @@ Filenames = {
     project = "tt_project",
     state = "tt_state",
     turnFile = "tt_turns",
-    teamleadState = "tt_teamlead_state"
+    serverState = "tt_server_state"
 }
 
 
