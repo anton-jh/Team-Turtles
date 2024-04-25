@@ -30,23 +30,18 @@ end
 
 Args = { ... }
 
-TurtleRoutine = nil
-ServerRoutine = nil
-
 if #Args == 0 then
-    TurtleRoutine = InitTurtle(nil)
-    ServerRoutine = InitServer(nil)
+    parallel.waitForAll(function ()
+        RunTurtle(nil)
+    end, function ()
+        RunServer(nil)
+    end)
 elseif #Args == 1 then
-    TurtleRoutine = InitTurtle(Args[1])
+    RunTurtle(Args[1])
 elseif #Args == 3 then
-    TurtleRoutine = InitTurtle(os.getComputerID())
-    ServerRoutine = InitServer(Args)
-end
-
-if TurtleRoutine and ServerRoutine then
-    parallel.waitForAny(TurtleRoutine, ServerRoutine)
-elseif TurtleRoutine then
-    TurtleRoutine()
-else
-    error("Could not start. There are probably errors above.")
+    parallel.waitForAny(function ()
+        RunTurtle(os.getComputerID())
+    end, function ()
+        RunServer(Args)
+    end)
 end

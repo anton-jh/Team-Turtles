@@ -12,7 +12,7 @@ ServerState = nil
 -- FUNCTIONS --
 
 
-function InitServer(args)
+function RunServer(args)
     local loadedState = nil
 
     if fs.exists(Filenames.serverState) then
@@ -45,35 +45,32 @@ function InitServer(args)
 
         ServerState.project.serverAddress = os.getComputerID()
         ServerState.project.projectId = newProjectId
-        ServerState.project.width = args.width
-        ServerState.project.height = args.height
-        ServerState.project.workingSide = args.side
+        ServerState.project.width = args[1]
+        ServerState.project.height = args[2]
+        ServerState.project.workingSide = args[3]
 
         SaveServerState()
     elseif loadedState then
         ServerState = loadedState
     else
-        print("Could not load server state.")
+        print("No server session to resume.")
         return false
     end
 
-    return function ()
-        while true do
-            local id, msg = rednet.receive(Communication.protocol)
-    
-            local payload = textutils.unserialize(msg)
-            local response = MessageHandlers[payload.message](payload, id)
-    
-            sleep(0.1)
-    
-            rednet.send(id, textutils.serialize(response), Communication.protocol)
-        end
+    while true do
+        local id, msg = rednet.receive(Communication.protocol.request)
+
+        local payload = textutils.unserialize(msg)
+        local response = MessageHandlers[payload.message](payload, id)
+
+        sleep(0.1)
+        rednet.send(id, textutils.serialize(response), Communication.protocol.response)
     end
 end
 
 function SaveServerState()
-    local fileHandle = fs.open(Filenames.teamleadState, "w")
-    fileHandle.write(textutils.serialize(State))
+    local fileHandle = fs.open(Filenames.serverState, "w")
+    fileHandle.write(textutils.serialize(ServerState))
     fileHandle.close()
 end
 

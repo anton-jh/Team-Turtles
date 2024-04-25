@@ -108,7 +108,6 @@ function FetchProject(serverAddress)
         message = Communication.messages.getProject
     }
     local response = SendRequest(serverAddress, textutils.serialize(payload))
-
     Project = textutils.unserialize(response)
     print("Project = " .. textutils.serialize(Project))
 end
@@ -116,11 +115,8 @@ end
 
 function SendRequest(id, msg)
     while true do
-        rednet.send(id, msg, Communication.protocol)
-        local responseId, responseMsg = rednet.receive(Communication.protocol, 10)
-        -- TODO: what id? sender or receiver?
-        -- TODO: FIX: in teamlead-mode, the request gets received as a response
-        -- possible fix: wait before listening for response (less than the server waits to send response)
+        rednet.send(id, msg, Communication.protocol.request)
+        local responseId, responseMsg = rednet.receive(Communication.protocol.response, 10)
 
         if responseId == id then
             return responseMsg

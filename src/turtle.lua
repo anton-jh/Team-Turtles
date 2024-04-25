@@ -12,7 +12,7 @@ Resuming = false
 -- FUNCTIONS --
 
 
-function InitTurtle(arg)
+function RunTurtle(arg)
     if (not arg) and fs.exists(Filenames.project) and fs.exists(Filenames.state) then
         LoadProject()
         LoadState()
@@ -23,7 +23,6 @@ function InitTurtle(arg)
         if not serverId then
             return false
         end
-        print(serverId)
         FetchProject(serverId)
         PersistProject()
         RequestLayer()
@@ -31,28 +30,26 @@ function InitTurtle(arg)
         InitPhase(Phase.outbound, { from = -1 })
     end
 
-    return function ()
-        while true do
-            local steps = ActivePhase.generateSteps(PhaseArgs)
-            local nSteps = #steps
-    
-            if not Resuming then
-                CompletedSteps = 0
-            else
-                Resuming = false
+    while true do
+        local steps = ActivePhase.generateSteps(PhaseArgs)
+        local nSteps = #steps
+
+        if not Resuming then
+            CompletedSteps = 0
+        else
+            Resuming = false
+        end
+
+        while CompletedSteps < nSteps do
+            local newPhase, newPhaseArgs = steps[CompletedSteps + 1]()
+
+            if newPhase then
+                InitPhase(newPhase, newPhaseArgs)
+                print(newPhase.name)
+                break
             end
-    
-            while CompletedSteps < nSteps do
-                local newPhase, newPhaseArgs = steps[CompletedSteps + 1]()
-    
-                if newPhase then
-                    InitPhase(newPhase, newPhaseArgs)
-                    print(newPhase.name)
-                    break
-                end
-    
-                CompletedSteps = CompletedSteps + 1
-            end
+
+            CompletedSteps = CompletedSteps + 1
         end
     end
 end
