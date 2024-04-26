@@ -29,13 +29,17 @@ function Down()
 end
 
 function Right()
+    StartTurn()
     turtle.turnRight()
     RecordTurn()
+    EndTurn()
 end
 
 function Left()
+    StartTurn()
     turtle.turnLeft()
     RecordTurn()
+    EndTurn()
 end
 
 
@@ -61,6 +65,21 @@ function ResetTurnFile()
     end
 end
 
+function StartTurn()
+    local any, data = turtle.inspect()
+    if fs.exists(Filenames.turnLock) then
+        fs.delete(Filenames.turnLock)
+    end
+    local turnLock = fs.open(Filenames.turnLock, "w")
+    turnLock.write(any and data.name or nil)
+    turnLock.close()
+end
+
+function EndTurn()
+    if fs.exists(Filenames.turnLock) then
+        fs.delete(Filenames.turnLock)
+    end
+end
 
 
 -- ANTI-COLLISION --
