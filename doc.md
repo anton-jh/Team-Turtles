@@ -24,3 +24,16 @@ If a restart happens after the request is sent and state saved on server but bef
 
 If turtle gets blocked by indestructible block, abandon current layer.
 If the block is in the corridor, error.
+
+
+### Handle chests
+
+Empty chest before mining it.
+
+
+
+## TODO
+
+[ ] Clear previous state when starting new job.
+[ ] Recover from turn-desync
+[ ] Configurable filter for skipping blocks

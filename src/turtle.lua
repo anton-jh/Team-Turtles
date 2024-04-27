@@ -16,7 +16,7 @@ function RunTurtle(arg)
     if (not arg) and fs.exists(Filenames.project) and fs.exists(Filenames.state) then
         LoadProject()
         LoadState()
-        CompletedSteps = Resume(LoadTurns(), ActivePhase.generateSteps(PhaseArgs))
+        CompletedSteps = Resume(ActivePhase.generateSteps(PhaseArgs))
         Resuming = true
     else
         local serverId = tonumber(arg)

@@ -10,8 +10,9 @@ Phase = {
 -- GLOBAL FUNCTIONS
 
 
-function Resume(turns, steps)
+function Resume(steps)
     local moves = InitialFuel - turtle.getFuelLevel()
+    local turns = LoadTurns()
 
     local step = 0
 
