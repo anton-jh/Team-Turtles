@@ -96,7 +96,7 @@ function RequestLayer()
     local response = textutils.unserialize(responseRaw)
 
     if not response.layer then
-        BroadcastError("Decommissioned.")
+        BroadcastFatalError("Decomissioned.")
     end
 
     AssignedLayer = response.layer

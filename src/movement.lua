@@ -65,20 +65,17 @@ function ResetTurnFile()
     end
 end
 
-function StartTurn()
+function StartTurn(targetDirection)
     local any, data = turtle.inspect()
-    if fs.exists(Filenames.turnLock) then
-        fs.delete(Filenames.turnLock)
-    end
-    local turnLock = fs.open(Filenames.turnLock, "w")
-    turnLock.write(any and data.name or nil)
-    turnLock.close()
+    ClearTable(Filenames.turnLock)
+    SaveTable(filenames.turnLock, {
+        direction = targetDirection,
+        blockInfront = any and data.name or ""
+    })
 end
 
 function EndTurn()
-    if fs.exists(Filenames.turnLock) then
-        fs.delete(Filenames.turnLock)
-    end
+    ClearTable(Filenames.turnLock)
 end
 
 

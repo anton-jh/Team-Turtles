@@ -37,7 +37,15 @@ if #Args == 0 then
         RunServer(nil)
     end)
 elseif #Args == 1 then
-    RunTurtle(Args[1])
+    if Args[1] == os.getComputerID() then
+        parallel.waitForAll(function ()
+            RunTurtle(os.getComputerID())
+        end, function ()
+            RunServer(nil)
+        end)
+    else
+        RunTurtle(Args[1])
+    end
 elseif #Args == 3 then
     parallel.waitForAny(function ()
         RunTurtle(os.getComputerID())

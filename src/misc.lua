@@ -20,8 +20,10 @@ function Me()
     return "TT_" .. os.getComputerID() .. "@" .. (Project.serverAddress or "_")
 end
 
-function BroadcastError(msg)
-    print("!! " .. msg)
+function BroadcastError(msg, printError)
+    if printError ~= false then
+        print("!! " .. msg)
+    end
     rednet.broadcast("!! " .. Me() .. ": " .. msg)
 end
 
@@ -49,4 +51,12 @@ function Ensure(fun, expect, errorMessage, resolveMessage)
         BroadcastError(errorMessage)
         announced = true
     end
+end
+
+function BroadcastFatalError(msg, printError)
+    for i = 1, 10 do
+        BroadcastError(msg, printError)
+        sleep(60)
+    end
+    error(msg)
 end
