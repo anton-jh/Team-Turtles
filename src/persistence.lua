@@ -9,6 +9,9 @@ function PersistProject()
 end
 
 function LoadProject()
+    if not fs.exists(Filenames.project) then
+        BroadcastFatalError("Cannot load project file.")
+    end
     local fileHandle = fs.open(Filenames.project, "r")
 
     Project = textutils.unserialize(fileHandle.readAll())
@@ -31,6 +34,9 @@ function PersistState()
 end
 
 function LoadState()
+    if not fs.exists(Filenames.state) then
+        BroadcastFatalError("Cannot load state.")
+    end
     local fileHandle = fs.open(Filenames.state, "r")
     local serializedState = fileHandle.readAll()
     fileHandle.close()

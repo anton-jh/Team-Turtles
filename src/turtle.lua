@@ -13,7 +13,7 @@ Resuming = false
 
 
 function RunTurtle(arg)
-    if (not arg) and fs.exists(Filenames.project) and fs.exists(Filenames.state) then
+    if not arg then
         LoadProject()
         LoadState()
         CompletedSteps = Resume(ActivePhase.generateSteps(PhaseArgs))
