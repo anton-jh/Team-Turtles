@@ -9,3 +9,31 @@ Direction = {
     outbound = "outbound",
     inbound = "inbound"
 }
+
+Communication = {}
+
+Communication.protocol = {
+    request = "EVB_TeamTurtles_Request",
+    response = "EVB_TeamTurtles_Response"
+}
+Communication.messages = {
+    requestLayer = "requestLayer",
+    getProject = "getProject"
+}
+
+Filenames = {
+    project = "tt_project",
+    state = "tt_state",
+    turnFile = "tt_turns",
+    turnLock = "tt_turn_lock",
+    serverState = "tt_server_state"
+}
+
+TurtleBlockTag = "computercraft:turtle"
+
+RefuelPosition = {
+    home = 1,
+    spawn = 2
+}
+
+MinimumNeededFuel = 200

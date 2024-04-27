@@ -1,17 +1,3 @@
--- CONSTANTS --
-
-
-TurtleBlockTag = "computercraft:turtle"
-
-RefuelPosition = {
-    home = 1,
-    spawn = 2
-}
-
-MinimumNeededFuel = 200
-
-
-
 -- MISC FUNCTIONS --
 
 
