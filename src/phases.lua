@@ -13,10 +13,9 @@ Phase = {
 function Resume(steps)
     local moves = InitialFuel - turtle.getFuelLevel()
     local turns = LoadTurnFile()
-    local blockInfront = turtle.inspect()
-    blockInfront = blockInfront and blockInfront.name or nil
+    local isBlockInfront, blockInfront = turtle.inspect()
 
-    if type(turns) == "table" and (blockInfront == turns.blockInfront) then
+    if type(turns) == "table" and isBlockInfront and blockInfront == turns.blockInfront then
         print("I got lost while turning. Please:")
         print("- Place me at the spawn")
         print("- Terminate the program")
