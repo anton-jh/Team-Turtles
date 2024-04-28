@@ -9,7 +9,7 @@ Project = {
 
 -- Persisted
 
-AssignedLayer = 0
+AssignedLayer = nil
 InitialFuel = nil
 ActivePhase = nil
 PhaseArgs = nil

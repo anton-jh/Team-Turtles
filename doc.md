@@ -35,5 +35,5 @@ Empty chest before mining it.
 ## TODO
 
 [ ] Clear previous state when starting new job.
-[ ] Recover from turn-desync
+[x] Recover from turn-desync
 [ ] Configurable filter for skipping blocks

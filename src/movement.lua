@@ -31,14 +31,12 @@ end
 function Right()
     StartTurn()
     turtle.turnRight()
-    RecordTurn()
     EndTurn()
 end
 
 function Left()
     StartTurn()
     turtle.turnLeft()
-    RecordTurn()
     EndTurn()
 end
 
@@ -46,14 +44,6 @@ end
 
 -- RECORD-KEEPING --
 
-
-function RecordTurn()
-    if not TurnFile then
-        TurnFile = fs.open(Filenames.turnFile, "w")
-    end
-
-    TurnFile.write("t")
-end
 
 function ResetTurnFile()
     if TurnFile then
@@ -65,17 +55,27 @@ function ResetTurnFile()
     end
 end
 
-function StartTurn(targetDirection)
+function StartTurn()
+    if not TurnFile then
+        if fs.exists(Filenames.turnFile) then
+            fs.delete(Filenames.turnFile)
+        end
+        TurnFile = fs.open(Filenames.turnFile, "w")
+    end
     local any, data = turtle.inspect()
-    ClearTable(Filenames.turnLock)
-    SaveTable(Filenames.turnLock, {
-        direction = targetDirection,
-        blockInfront = any and data.name or ""
-    })
+    TurnFile.writeLine(textutils.serialize({
+        blockInfront = any and data.name or nil
+    }))
 end
 
 function EndTurn()
-    ClearTable(Filenames.turnLock)
+    if not TurnFile then
+        if fs.exists(Filenames.turnFile) then
+            fs.delete(Filenames.turnFile)
+        end
+        TurnFile = fs.open(Filenames.turnFile, "w")
+    end
+    TurnFile.writeLine("ok")
 end
 
 

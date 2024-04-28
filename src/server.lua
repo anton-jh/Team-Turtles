@@ -89,7 +89,7 @@ MessageHandlers = {
             }
         end
 
-        if payload.previousLayer ~= 0 and ServerState.turtles[id] ~= payload.previousLayer then
+        if payload.previousLayer ~= ServerState.turtles[id] or (not payload.previousLayer and ServerState.turtles[id]) then
             return {
                 layer = ServerState.turtles[id]
             }
@@ -97,7 +97,7 @@ MessageHandlers = {
 
         local newLayer = #ServerState.layers + 1
         ServerState.layers[newLayer] = id
-        if payload.previousLayer ~= 0 then
+        if payload.previousLayer then
             ServerState.layers[payload.previousLayer] = false
         end
         ServerState.turtles[id] = newLayer

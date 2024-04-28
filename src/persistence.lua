@@ -50,17 +50,24 @@ function LoadState()
 end
 
 
-function LoadTurns()
-    if not fs.exists(Filenames.turnFile) then
-        return 0
+function LoadTurnFile()
+    local unfinished = nil
+    local turns = 0
+    if fs.exists(Filenames.turnFile) then
+        local handle = fs.open(Filenames.turnFile, "r")
+        local line = nil
+        repeat
+            line = handle.readLine()
+            if line == "ok" then
+                turns = turns + 1
+                unfinished = nil
+            elseif line ~= nil then
+                unfinished = line
+            end
+        until line == nil
+        handle.close()
     end
-
-    local fileHandle = fs.open(Filenames.turnFile, "r")
-    local contents = fileHandle.readAll()
-
-    TurnFile = fs.open(Filenames.turnFile, "w")
-
-    return #contents
+    return unfinished and textutils.unserialize(unfinished) or turns
 end
 
 
