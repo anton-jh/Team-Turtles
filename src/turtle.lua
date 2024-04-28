@@ -53,3 +53,16 @@ function RunTurtle(arg)
         end
     end
 end
+
+function ClearTurtle()
+    local files = {
+        Filenames.project,
+        Filenames.state,
+        Filenames.turnFile
+    }
+    for _, filename in pairs(files) do
+        if fs.exists(filename) then
+            fs.delete(filename)
+        end
+    end
+end

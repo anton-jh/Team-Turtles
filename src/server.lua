@@ -66,6 +66,12 @@ function RunServer(args)
     end
 end
 
+function ClearServer()
+    if fs.exists(Filenames.serverState) then
+        fs.delete(Filenames.serverState)
+    end
+end
+
 function SaveServerState()
     local fileHandle = fs.open(Filenames.serverState, "w")
     fileHandle.write(textutils.serialize(ServerState))

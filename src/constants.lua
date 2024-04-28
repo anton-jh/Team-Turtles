@@ -25,7 +25,6 @@ Filenames = {
     project = "tt_project",
     state = "tt_state",
     turnFile = "tt_turns",
-    turnLock = "tt_turn_lock",
     serverState = "tt_server_state"
 }
 
