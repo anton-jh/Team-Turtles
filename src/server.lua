@@ -1,22 +1,81 @@
-require("shared.communication")
-require("shared.constants")
-require("shared.utils")
+
 
 
 
 -- STATE --
 
 
-State = nil
+ServerState = nil
 
 
 
 -- FUNCTIONS --
 
 
-function SaveState()
-    local fileHandle = fs.open("state", "w")
-    fileHandle.write(textutils.serialize(State))
+function RunServer(args)
+    local loadedState = nil
+
+    if fs.exists(Filenames.serverState) then
+        local fileHandle = fs.open(Filenames.serverState, "r")
+        loadedState = textutils.unserialize(fileHandle.readAll())
+        fileHandle.close()
+    end
+
+    if args then
+        local width = tonumber(args[1])
+        local height = tonumber(args[2])
+        local side = args[3]
+
+        if not width or width <= 0 or not height or height <= 0 or (side ~= WorkingSide.right and side ~= WorkingSide.left) then
+            error("Usage: <width> <height> <right|left>")
+            return false
+        end
+        if height % 3 ~= 0 then
+            error("Height must be divisible by 3!")
+            return false
+        end
+
+        ServerState = {
+            layers = {},
+            turtles = {},
+            project = {}
+        }
+
+        ServerState.project.serverAddress = os.getComputerID()
+        ServerState.project.projectId = os.epoch()
+        ServerState.project.width = width
+        ServerState.project.height = height
+        ServerState.project.workingSide = side
+        ServerState.project.filters = LoadFilters()
+
+        SaveServerState()
+    elseif loadedState then
+        ServerState = loadedState
+    else
+        print("No server session to resume.")
+        return false
+    end
+
+    while true do
+        local id, msg = rednet.receive(Communication.protocol.request)
+
+        local payload = textutils.unserialize(msg)
+        local response = MessageHandlers[payload.message](payload, id)
+
+        sleep(0.1)
+        rednet.send(id, textutils.serialize(response), Communication.protocol.response)
+    end
+end
+
+function ClearServer()
+    if fs.exists(Filenames.serverState) then
+        fs.delete(Filenames.serverState)
+    end
+end
+
+function SaveServerState()
+    local fileHandle = fs.open(Filenames.serverState, "w")
+    fileHandle.write(textutils.serialize(ServerState))
     fileHandle.close()
 end
 
@@ -27,110 +86,32 @@ end
 
 MessageHandlers = {
     [Communication.messages.getProject] = function (payload, id)
-        return State.project
+        return ServerState.project
     end,
 
     [Communication.messages.requestLayer] = function (payload, id)
-        if payload.projectId ~= State.project.projectId then
+        if payload.projectId ~= ServerState.project.projectId then
             return {
                 layer = nil
             }
         end
 
-        if payload.previousLayer ~= 0 and State.turtles[id] ~= payload.previousLayer then
+        if payload.previousLayer ~= ServerState.turtles[id] or (not payload.previousLayer and ServerState.turtles[id]) then
             return {
-                layer = State.turtles[id]
+                layer = ServerState.turtles[id]
             }
         end
 
-        local newLayer = #State.layers + 1
-        State.layers[newLayer] = id
-        if payload.previousLayer ~= 0 then
-            State.layers[payload.previousLayer] = false
+        local newLayer = #ServerState.layers + 1
+        ServerState.layers[newLayer] = id
+        if payload.previousLayer then
+            ServerState.layers[payload.previousLayer] = false
         end
-        State.turtles[id] = newLayer
-        SaveState()
+        ServerState.turtles[id] = newLayer
+        SaveServerState()
 
         return {
             layer = newLayer
         }
     end
 }
-
-
-
--- MAIN --
-
-
-rednet.close("back")
-rednet.open("back")
-
-Args = { ... }
-
-
-if fs.exists("state") then
-    local fileHandle = fs.open("state", "r")
-    State = textutils.unserialize(fileHandle.readAll())
-    fileHandle.close()
-end
-
----@diagnostic disable-next-line: undefined-field
-if #Args > 0 then
-    local width = tonumber(Args[1])
-    local height = tonumber(Args[2])
-    local side = Args[3]
-
-    if not width or width <= 0 or not height or height <= 0 or (side ~= WorkingSide.right and side ~= WorkingSide.left) then
-        error("Usage: server <width> <height> <right|left>")
-    end
-    if height % 3 ~= 0 then
-        error("Height must be divisible by 3!")
-    end
-
-    local prevProjectId = State and State.project.projectId or 0
-
-    State = {
-        layers = {},
-        turtles = {},
-        project = {}
-    }
-
----@diagnostic disable-next-line: undefined-field
-    State.project.serverAddress = os.getComputerID()
-    State.project.projectId = prevProjectId + 1
-    State.project.width = width
-    State.project.height = height
-    State.project.workingSide = side
-
-    SaveState()
-end
-
-if not fs.exists("state") and #Args == 0 then
-    error("Usage: server <width> <height> <right|left>")
-end
-
-
-while true do
-    term.clear()
-
-    WriteCenter("TeamTurtles Server #" .. State.project.serverAddress
-        .. " (" .. State.project.width .. "x" .. State.project.height .. ", " .. State.project.workingSide .. ")", 1)
-
-    print("\n")
-
-    print("Layer - Turtle")
-    for layer, turtleId in ipairs(State.layers) do
-        if layer ~= 0 and turtleId then
-            print(layer .. " - " .. turtleId)
-        end
-    end
-
-    local id, msg = rednet.receive(Communication.protocol)
-
-    local payload = textutils.unserialize(msg)
-    local response = MessageHandlers[payload.message](payload, id)
-
-    sleep(0.1)
-
-    rednet.send(id, textutils.serialize(response), Communication.protocol)
-end

@@ -39,5 +39,4 @@ function Build(filename)
 end
 
 
-Build("turtle.lua")
-Build("server.lua")
+Build("main.lua")

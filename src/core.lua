@@ -36,13 +36,57 @@ end
 -- MINING, HELPERS --
 
 
-function IsInteresting(blockData)
-    return blockData.tags["c:ores"]
-end
-
 function CheckInventoryIsFull()
     return turtle.getItemCount(16) > 0
 end
+
+
+function IsInteresting(blockData)
+    local result = true
+    local opcode = nil
+    local filterText = nil
+    local subResult = nil
+
+    for _, line in pairs(Project.filters) do
+        opcode = string.sub(line, 1, 2)
+        filterText = string.sub(line, 4, -1)
+        subResult = FilterFunctions[opcode](filterText, blockData)
+        if subResult ~= nil then
+            result = subResult
+        end
+    end
+
+    return result
+end
+
+FilterFunctions = {
+    ["++"] = function (filter, blockData) return true end,
+    ["--"] = function (filter, blockData) return false end,
+    ["+n"] = function (filter, blockData)
+        if blockData.name == filter then
+            return true
+        end
+        return nil
+    end,
+    ["-n"] = function (filter, blockData)
+        if blockData.name == filter then
+            return false
+        end
+        return nil
+    end,
+    ["+t"] = function (filter, blockData)
+        if blockData.tags[filter] == true then
+            return true
+        end
+        return nil
+    end,
+    ["-t"] = function (filter, blockData)
+        if blockData.tags[filter] == true then
+            return false
+        end
+        return nil
+    end
+}
 
 
 
@@ -68,7 +112,7 @@ function Refuel(refuelPosition)
     neededFuel = math.max(neededFuel, MinimumNeededFuel)
 
     turtle.select(1)
-     while turtle.getFuelLevel() < neededFuel do
+    while turtle.getFuelLevel() < neededFuel do
         Ensure(refuelPosition == RefuelPosition.home and suckFuelInfront or suckFuelBelow,
             true, "Cannot refuel.", "Got fuel.")
 
@@ -78,7 +122,7 @@ function Refuel(refuelPosition)
             end
             Ensure(turtle.dropDown, true, "Cannot empty.", "Emptied successfully.")
         end
-     end
+    end
 end
 
 
@@ -96,7 +140,7 @@ function RequestLayer()
     local response = textutils.unserialize(responseRaw)
 
     if not response.layer then
-        BroadcastError("Decommissioned.")
+        BroadcastFatalError("Decomissioned.")
     end
 
     AssignedLayer = response.layer
@@ -108,7 +152,6 @@ function FetchProject(serverAddress)
         message = Communication.messages.getProject
     }
     local response = SendRequest(serverAddress, textutils.serialize(payload))
-
     Project = textutils.unserialize(response)
     print("Project = " .. textutils.serialize(Project))
 end
@@ -116,8 +159,8 @@ end
 
 function SendRequest(id, msg)
     while true do
-        rednet.send(id, msg, Communication.protocol)
-        local responseId, responseMsg = rednet.receive(Communication.protocol, 10)
+        rednet.send(id, msg, Communication.protocol.request)
+        local responseId, responseMsg = rednet.receive(Communication.protocol.response, 10)
 
         if responseId == id then
             return responseMsg

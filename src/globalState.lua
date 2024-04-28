@@ -4,12 +4,13 @@ Project = {
     projectId = nil, -- string
     width = nil, -- integer
     height = nil, -- integer
-    workingSide = nil, -- WorkingSide
+    workingSide = nil, -- WorkingSide,
+    filters = nil, -- table
 }
 
 -- Persisted
 
-AssignedLayer = 0
+AssignedLayer = nil
 InitialFuel = nil
 ActivePhase = nil
 PhaseArgs = nil
