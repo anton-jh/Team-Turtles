@@ -72,17 +72,18 @@ end
 
 
 function LoadFilters()
-    Filters = {}
+    local filters = {}
     if not fs.exists(Filenames.filter) then
-        return
+        return filters
     end
     local handle = fs.open(Filenames.filter, "r")
     local line = nil
     repeat
         line = handle.readLine()
         if line then
-            table.insert(Filters, line)
+            table.insert(filters, line)
         end
     until not line
     handle.close()
+    return filters
 end

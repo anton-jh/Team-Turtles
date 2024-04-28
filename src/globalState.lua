@@ -4,7 +4,8 @@ Project = {
     projectId = nil, -- string
     width = nil, -- integer
     height = nil, -- integer
-    workingSide = nil, -- WorkingSide
+    workingSide = nil, -- WorkingSide,
+    filters = nil, -- table
 }
 
 -- Persisted
@@ -18,4 +19,3 @@ PhaseArgs = nil
 
 CompletedSteps = 0
 TurnFile = nil
-Filters = nil

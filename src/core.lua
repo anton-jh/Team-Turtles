@@ -42,16 +42,12 @@ end
 
 
 function IsInteresting(blockData)
-    if not Filters then
-        LoadFilters()
-    end
-
     local result = true
     local opcode = nil
     local filterText = nil
     local subResult = nil
 
-    for _, line in pairs(Filters) do
+    for _, line in pairs(Project.filters) do
         opcode = string.sub(line, 1, 2)
         filterText = string.sub(line, 4, -1)
         subResult = FilterFunctions[opcode](filterText, blockData)

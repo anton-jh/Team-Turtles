@@ -46,6 +46,7 @@ function RunServer(args)
         ServerState.project.width = width
         ServerState.project.height = height
         ServerState.project.workingSide = side
+        ServerState.project.filters = LoadFilters()
 
         SaveServerState()
     elseif loadedState then
