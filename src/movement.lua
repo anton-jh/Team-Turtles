@@ -68,7 +68,7 @@ end
 function StartTurn(targetDirection)
     local any, data = turtle.inspect()
     ClearTable(Filenames.turnLock)
-    SaveTable(filenames.turnLock, {
+    SaveTable(Filenames.turnLock, {
         direction = targetDirection,
         blockInfront = any and data.name or ""
     })

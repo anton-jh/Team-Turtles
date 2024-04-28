@@ -37,3 +37,5 @@ RefuelPosition = {
 }
 
 MinimumNeededFuel = 200
+
+ProjectIdLength = 10

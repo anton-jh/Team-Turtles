@@ -52,4 +52,4 @@ elseif #Args == 3 then
     end)
 end
 
--- TODO: clear previous state if starting new session, but preserve projet id (or generate random each time if possible? math.random?)
+-- TODO: clear previous state if starting new session, but preserve project id (or generate random each time if possible? math.random?)

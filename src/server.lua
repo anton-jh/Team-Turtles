@@ -27,15 +27,13 @@ function RunServer(args)
         local side = args[3]
 
         if not width or width <= 0 or not height or height <= 0 or (side ~= WorkingSide.right and side ~= WorkingSide.left) then
-            error("Usage: server <width> <height> <right|left>")
+            error("Usage: <width> <height> <right|left>")
             return false
         end
         if height % 3 ~= 0 then
             error("Height must be divisible by 3!")
             return false
         end
-
-        local newProjectId = loadedState and loadedState.project.projectId or 1
 
         ServerState = {
             layers = {},
@@ -44,10 +42,10 @@ function RunServer(args)
         }
 
         ServerState.project.serverAddress = os.getComputerID()
-        ServerState.project.projectId = newProjectId
-        ServerState.project.width = args[1]
-        ServerState.project.height = args[2]
-        ServerState.project.workingSide = args[3]
+        ServerState.project.projectId = os.epoch()
+        ServerState.project.width = width
+        ServerState.project.height = height
+        ServerState.project.workingSide = side
 
         SaveServerState()
     elseif loadedState then
