@@ -18,3 +18,4 @@ PhaseArgs = nil
 
 CompletedSteps = 0
 TurnFile = nil
+Filters = nil

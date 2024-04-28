@@ -36,13 +36,61 @@ end
 -- MINING, HELPERS --
 
 
-function IsInteresting(blockData)
-    return blockData.tags["c:ores"]
-end
-
 function CheckInventoryIsFull()
     return turtle.getItemCount(16) > 0
 end
+
+
+function IsInteresting(blockData)
+    if not Filters then
+        LoadFilters()
+    end
+
+    local result = true
+    local opcode = nil
+    local filterText = nil
+    local subResult = nil
+
+    for _, line in pairs(Filters) do
+        opcode = string.sub(line, 1, 2)
+        filterText = string.sub(line, 4, -1)
+        subResult = FilterFunctions[opcode](filterText, blockData)
+        if subResult ~= nil then
+            result = subResult
+        end
+    end
+
+    return result
+end
+
+FilterFunctions = {
+    ["++"] = function (filter, blockData) return true end,
+    ["--"] = function (filter, blockData) return false end,
+    ["+n"] = function (filter, blockData)
+        if blockData.name == filter then
+            return true
+        end
+        return nil
+    end,
+    ["-n"] = function (filter, blockData)
+        if blockData.name == filter then
+            return false
+        end
+        return nil
+    end,
+    ["+t"] = function (filter, blockData)
+        if blockData.tags[filter] == true then
+            return true
+        end
+        return nil
+    end,
+    ["-t"] = function (filter, blockData)
+        if blockData.tags[filter] == true then
+            return false
+        end
+        return nil
+    end
+}
 
 
 

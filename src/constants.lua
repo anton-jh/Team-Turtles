@@ -25,6 +25,7 @@ Filenames = {
     project = "tt_project",
     state = "tt_state",
     turnFile = "tt_turns",
+    filter = "tt_filter",
     serverState = "tt_server_state"
 }
 

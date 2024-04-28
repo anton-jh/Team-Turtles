@@ -71,29 +71,18 @@ function LoadTurnFile()
 end
 
 
-function SaveTable(filename, tbl)
-    ClearTable(filename)
-
-    local fileHandle = fs.open(filename, "w")
-    fileHandle.write(textutils.serialize(tbl))
-    fileHandle.close()
-end
-
-function LoadTable(filename)
-    if not fs.exists(filename) then
-        return nil
+function LoadFilters()
+    Filters = {}
+    if not fs.exists(Filenames.filter) then
+        return
     end
-
-    local fileHandle = fs.open(filename, "r")
-    local contents = fileHandle.readAll()
-
-    return textutils.unserialize(contents)
-end
-
-function ClearTable(filename)
-    if fs.exists(filename) then
-        fs.delete(filename)
-        return true
-    end
-    return false
+    local handle = fs.open(Filenames.filter, "r")
+    local line = nil
+    repeat
+        line = handle.readLine()
+        if line then
+            table.insert(Filters, line)
+        end
+    until not line
+    handle.close()
 end
