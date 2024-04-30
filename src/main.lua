@@ -10,6 +10,46 @@ require("turtle")
 
 
 
+function Install()
+    local programName = shell.getRunningProgram()
+    local startupScript = "shell.run(\"" .. programName .. "\")"
+    local oppositeNames = {
+        ["startup"] = "startup.lua",
+        ["startup.lua"] = "startup"
+    }
+
+    if programName == "startup" or programName == "startup.lua" then
+        if fs.exists(oppositeNames[programName]) then
+            fs.move(oppositeNames[programName], os.epoch() .. "_" .. oppositeNames[programName])
+        end
+        return
+    end
+
+    if fs.exists("startup.lua") then
+        fs.move("startup.lua", os.epoch() .. "_startup.lua")
+    end
+
+    if fs.exists("startup") then
+        local readHandle = fs.open("startup", "r")
+        local contents = readHandle.readAll()
+        readHandle.close()
+
+        if contents == startupScript then
+            return
+        end
+
+        fs.move("startup", os.epoch() .. "_startup")
+    end
+
+    local writeHandle = fs.open("startup", "w")
+    writeHandle.write(startupScript)
+    writeHandle.close()
+end
+
+
+Install()
+
+
 for _, side in pairs({
     "top",
     "bottom",
