@@ -29,6 +29,8 @@ end
 Args = { ... }
 
 if #Args == 0 then
+    print("Turtle resuming in 5 seconds...")
+    sleep(5)
     parallel.waitForAll(function ()
         RunTurtle(nil)
     end, function ()
