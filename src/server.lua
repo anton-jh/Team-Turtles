@@ -46,15 +46,16 @@ function RunServer(args)
         ServerState.project.width = width
         ServerState.project.height = height
         ServerState.project.workingSide = side
-        ServerState.project.filters = LoadFilters()
-
-        SaveServerState()
     elseif loadedState then
         ServerState = loadedState
     else
         print("No server session to resume.")
         return false
     end
+
+    
+    ServerState.project.filters = LoadFilters()
+    SaveServerState()
 
     while true do
         local id, msg = rednet.receive(Communication.protocol.request)
