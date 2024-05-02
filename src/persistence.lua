@@ -25,7 +25,8 @@ function PersistState()
         assignedLayer = AssignedLayer,
         initialFuel = InitialFuel,
         activePhase = ActivePhase.name,
-        phaseArgs = PhaseArgs
+        phaseArgs = PhaseArgs,
+        layerProgress = LayerProgress,
     }
     local serializedState = textutils.serialize(state)
 
@@ -47,6 +48,7 @@ function LoadState()
     InitialFuel = state.initialFuel
     ActivePhase = Phase[state.activePhase]
     PhaseArgs = state.phaseArgs
+    LayerProgress = state.layerProgress
 end
 
 

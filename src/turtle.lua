@@ -28,6 +28,9 @@ function RunTurtle(arg)
         else
             Resuming = false
         end
+        if ActivePhase.name == Phase.working.name then
+            CompletedSteps = LayerProgress or 0
+        end
 
         while CompletedSteps < nSteps do
             local newPhase, newPhaseArgs = steps[CompletedSteps + 1]()

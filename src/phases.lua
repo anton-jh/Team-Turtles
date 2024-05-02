@@ -1,6 +1,7 @@
 Phase = {
     inbound = { name = "inbound" },
     outbound = { name = "outbound" },
+    resuming = { name = "resuming" },
     working = { name = "working" },
     backtracking = { name = "backtracking" },
     emptyAndRefuel = { name = "emptyAndRefuel" }
@@ -103,6 +104,65 @@ function Phase.outbound.generateSteps(args)
     table.insert(steps, Down)
 
     table.insert(steps, function ()
+        if LayerProgress and LayerProgress > 0 then
+            return Phase.resuming
+        else
+            return Phase.working
+        end
+    end)
+
+    return steps
+end
+
+
+
+-- RESUMING --
+
+
+function Phase.resuming.generateSteps(args)
+    local steps = {}
+    local direction = 1 -- 1 = out, 2 = right, 3 = in, 4 = left
+    local y = 0
+    local x = 0
+
+    for i, step in ipairs(Phase.working.generateSteps()) do
+        if i > LayerProgress then
+            break
+        end
+
+        if step == Down then
+            y = y + 1
+        elseif step == Right then
+            direction = direction == 4 and 1 or (direction + 1)
+        elseif step == Left then
+            direction = direction == 1 and 4 or (direction - 1)
+        elseif step == Forward then
+            if direction == 1 then
+                x = x + 1
+            elseif direction == 3 then
+                x = x - 1
+            end
+        end
+    end
+
+    for i = 0, x - 1 do
+        table.insert(steps, Forward)
+    end
+
+    for i = 0, y - 1 do
+        table.insert(steps, Down)
+    end
+
+    if direction == 3 then
+        table.insert(steps, Right)
+        table.insert(steps, Right)
+    elseif direction == 2 then
+        table.insert(steps, Right)
+    elseif direction == 4 then
+        table.insert(steps, Left)
+    end
+
+    table.insert(steps, function ()
         return Phase.working
     end)
 
@@ -116,6 +176,9 @@ end
 
 function Phase.working.generateSteps(_)
     local function backtrackToHome()
+        LayerProgress = CompletedSteps
+        PersistState()
+
         return Phase.backtracking, {
             nDoneSteps = CompletedSteps,
             goHome = true
@@ -179,10 +242,8 @@ function Phase.backtracking.generateSteps(args)
             y = y + 1
         elseif step == Right then
             direction = direction == 4 and 1 or (direction + 1)
-            x = 0
         elseif step == Left then
             direction = direction == 1 and 4 or (direction - 1)
-            x = 0
         elseif step == Forward then
             if direction == 1 then
                 x = x + 1
@@ -201,11 +262,11 @@ function Phase.backtracking.generateSteps(args)
         table.insert(steps, Left)
     end
 
-    for i = 1, y do
+    for i = 0, y - 1 do
         table.insert(steps, Up)
     end
 
-    for i = 1, x do
+    for i = 0, x - 1 do
         table.insert(steps, Forward)
     end
 

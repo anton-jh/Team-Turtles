@@ -14,6 +14,7 @@ AssignedLayer = nil
 InitialFuel = nil
 ActivePhase = nil
 PhaseArgs = nil
+LayerProgress = nil
 
 -- Not persisted
 

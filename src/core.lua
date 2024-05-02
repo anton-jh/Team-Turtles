@@ -153,6 +153,7 @@ function RequestLayer()
     end
 
     AssignedLayer = response.layer
+    LayerProgress = nil
     print("AssignedLayer = " .. AssignedLayer)
 end
 
