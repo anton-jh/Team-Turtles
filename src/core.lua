@@ -96,11 +96,12 @@ FilterFunctions = {
 function CalculateNeededFuel()
     local neededFuel = 0
     neededFuel = neededFuel + AssignedLayer * 2
-    neededFuel = neededFuel + Project.width * Project.height / 3
+    neededFuel = neededFuel + (Project.width * Project.height / 3) * 2
     neededFuel = neededFuel + Project.height * 2
     neededFuel = neededFuel + 20
     neededFuel = math.max(neededFuel, MinimumNeededFuel)
     print("Needed fuel = " .. neededFuel)
+    return neededFuel
 end
 
 function Refuel(refuelPosition)

@@ -88,6 +88,10 @@ function Phase.outbound.generateSteps(args)
         table.insert(steps, Right)
         table.insert(steps, Right)
         table.insert(steps, Up)
+    elseif args.from > 0 then
+        table.insert(steps, Up)
+        table.insert(steps, Forward)
+        table.insert(steps, Project.workingSide == WorkingSide.right and Right or Left)
     end
 
     for _ = args.from + 1, AssignedLayer do
@@ -192,11 +196,8 @@ function Phase.backtracking.generateSteps(args)
     end
 
     if args.goHome then
-        table.insert(steps, Forward)
-        table.insert(steps, Project.workingSide == WorkingSide.right and Left or Right)
-
         table.insert(steps, function ()
-            return Phase.inbound
+            return Phase.inbound, { from = AssignedLayer }
         end)
     else
         local prevLayer = AssignedLayer
@@ -205,12 +206,13 @@ function Phase.backtracking.generateSteps(args)
             RequestLayer()
             PersistState()
         end)
-        table.insert(steps, Up)
-        table.insert(steps, Forward)
-        table.insert(steps, Project.workingSide == WorkingSide.right and Right or Left)
 
         table.insert(steps, function ()
-            return Phase.outbound, { from = prevLayer }
+            if turtle.getFuelLevel() < CalculateNeededFuel() then
+                return Phase.inbound, { from = prevLayer }
+            else
+                return Phase.outbound, { from = prevLayer }
+            end
         end)
     end
 
@@ -222,11 +224,14 @@ end
 -- INBOUND --
 
 
-function Phase.inbound.generateSteps(_)
+function Phase.inbound.generateSteps(args)
     local steps = {}
 
-    for i = 1, AssignedLayer do
-        steps[i] = Forward
+    table.insert(steps, Forward)
+    table.insert(steps, Project.workingSide == WorkingSide.right and Left or Right)
+
+    for i = 1, args.from do
+        table.insert(steps, Forward)
     end
 
     table.insert(steps, function ()
