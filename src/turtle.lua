@@ -1,14 +1,3 @@
-
-
-
-
--- STATE --
-
-
-Resuming = false
-
-
-
 -- FUNCTIONS --
 
 

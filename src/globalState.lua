@@ -19,3 +19,4 @@ PhaseArgs = nil
 
 CompletedSteps = 0
 TurnFile = nil
+Resuming = false

@@ -166,33 +166,47 @@ end
 
 function Phase.backtracking.generateSteps(args)
     local steps = {}
-    local doneSteps = {}
+    local direction = 1 -- 1 = out, 2 = right, 3 = in, 4 = left
+    local y = 0
+    local x = 0
 
     for i, step in ipairs(Phase.working.generateSteps()) do
         if i > args.nDoneSteps then
             break
         end
 
-        table.insert(doneSteps, step)
+        if step == Down then
+            y = y + 1
+        elseif step == Right then
+            direction = direction == 4 and 1 or (direction + 1)
+            x = 0
+        elseif step == Left then
+            direction = direction == 1 and 4 or (direction - 1)
+            x = 0
+        elseif step == Forward then
+            if direction == 1 then
+                x = x + 1
+            elseif direction == 3 then
+                x = x - 1
+            end
+        end
     end
 
-    table.insert(steps, Left)
-    table.insert(steps, Left)
+    if direction == 1 then
+        table.insert(steps, Right)
+        table.insert(steps, Right)
+    elseif direction == 2 then
+        table.insert(steps, Right)
+    elseif direction == 4 then
+        table.insert(steps, Left)
+    end
 
-    for i = args.nDoneSteps, 1, -1 do
-        local step = doneSteps[i]
+    for i = 1, y do
+        table.insert(steps, Up)
+    end
 
-        if step == Forward then
-            table.insert(steps, Forward)
-        elseif step == Up then
-            table.insert(steps, Down)
-        elseif step == Down then
-            table.insert(steps, Up)
-        elseif step == Left then
-            table.insert(steps, Right)
-        elseif step == Right then
-            table.insert(steps, Left)
-        end
+    for i = 1, x do
+        table.insert(steps, Forward)
     end
 
     if args.goHome then
