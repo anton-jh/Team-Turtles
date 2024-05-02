@@ -93,28 +93,34 @@ FilterFunctions = {
 -- REFUELING --
 
 
-function Refuel(refuelPosition)
-    local function suckFuelInfront()
-        turtle.suck()
-        return turtle.getItemCount() > 0
-    end
-    local function suckFuelBelow()
-        turtle.suckDown()
-        return turtle.getItemCount() > 0
-    end
-
+function CalculateNeededFuel()
     local neededFuel = 0
     neededFuel = neededFuel + AssignedLayer * 2
     neededFuel = neededFuel + Project.width * Project.height / 3
     neededFuel = neededFuel + Project.height * 2
-    neededFuel = neededFuel + 10
-    neededFuel = neededFuel + (refuelPosition == RefuelPosition.spawn and 1 or 0)
+    neededFuel = neededFuel + 20
     neededFuel = math.max(neededFuel, MinimumNeededFuel)
+    print("Needed fuel = " .. neededFuel)
+end
+
+function Refuel(refuelPosition)
+    local function suckFuelInfront()
+        turtle.suck(1)
+        return turtle.getItemCount() > 0
+    end
+    local function suckFuelBelow()
+        turtle.suckDown(1)
+        return turtle.getItemCount() > 0
+    end
+
+    local neededFuel = CalculateNeededFuel()
 
     turtle.select(1)
     while turtle.getFuelLevel() < neededFuel do
-        Ensure(refuelPosition == RefuelPosition.home and suckFuelInfront or suckFuelBelow,
-            true, "Cannot refuel.", "Got fuel.")
+        if turtle.getItemCount() == 0 then
+            Ensure(refuelPosition == RefuelPosition.home and suckFuelInfront or suckFuelBelow,
+                true, "Cannot refuel.", "Got fuel.")
+        end
 
         if not turtle.refuel() then
             if refuelPosition == RefuelPosition.spawn then
@@ -123,6 +129,8 @@ function Refuel(refuelPosition)
             Ensure(turtle.dropDown, true, "Cannot empty.", "Emptied successfully.")
         end
     end
+
+    print("Fuel level = " .. turtle.getFuelLevel())
 end
 
 

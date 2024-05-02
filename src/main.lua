@@ -51,12 +51,8 @@ Install()
 
 
 for _, side in pairs({
-    "top",
-    "bottom",
     "left",
     "right",
-    "front",
-    "back"
 }) do
     if peripheral.hasType(side, "modem") then
         rednet.close(side)
