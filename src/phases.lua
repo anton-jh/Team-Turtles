@@ -13,21 +13,35 @@ Phase = {
 
 function Resume(steps)
     local moves = InitialFuel - turtle.getFuelLevel()
-    local turns = LoadTurnFile()
+    local turns, lastTurn, lastTurnCompleted = LoadTurnFile()
     local isBlockInfront, blockInfront = turtle.inspect()
+    if not isBlockInfront then
+        blockInfront = nil
+    end
 
-    if type(turns) == "table" and isBlockInfront and blockInfront == turns.blockInfront then
-        print("I got lost while turning. Please:")
-        print("- Place me at the spawn")
-        print("- Terminate the program")
-        print("- Rejoin the project (server id: " .. Project.serverAddress .. ")")
-        local location = "basecamp"
-        if ActivePhase.name == Phase.working.name or ActivePhase.name == Phase.backtracking.name then
-            location = "layer " .. AssignedLayer
-        elseif ActivePhase.name == Phase.inbound or ActivePhase.name == Phase.outbound.name then
-            location = "corridor"
+    print(textutils.serialize({
+        moves = moves,
+        turns = turns,
+        lastTurn = lastTurn and "table" or "nil",
+        lastTurnCompleted = lastTurnCompleted
+    }))
+
+    if not lastTurnCompleted then
+        if blockInfront == lastTurn.blockInfront then
+            print("I got lost while turning. Please:")
+            print("- Place me at the spawn")
+            print("- Terminate the program")
+            print("- Rejoin the project (server id: " .. Project.serverAddress .. ")")
+            local location = "basecamp"
+            if ActivePhase.name == Phase.working.name or ActivePhase.name == Phase.backtracking.name then
+                location = "layer " .. AssignedLayer
+            elseif ActivePhase.name == Phase.inbound or ActivePhase.name == Phase.outbound.name then
+                location = "corridor"
+            end
+            BroadcastFatalError("Lost at " .. location .. ".", false)
+        else
+            lastTurnCompleted = true
         end
-        BroadcastFatalError("Lost at " .. location .. ".", false)
     end
 
     local step = 0
@@ -41,12 +55,22 @@ function Resume(steps)
             BroadcastFatalError("Cannot resume from saved state. Turtle has consumed more fuel than expected.")
         end
     end
+    print("step after moves: " .. step)
+
+    if lastTurn and step > lastTurn.step then
+        print("lastTurn and step > lastTurn.step: " .. step)
+        return step
+    end
 
     local foundTurns = 0
     while foundTurns < turns do
         step = step + 1
         if IsTurn(steps[step]) then
+            if lastTurn and step > lastTurn.step then
+                BroadcastFatalError("Cannot resume from saved state. Saved state is invalid.")
+            end
             foundTurns = foundTurns + 1
+            print("found turn, step: " .. step)
         elseif steps[step] == nil or IsMove(steps[step]) then
             BroadcastFatalError("Cannot resume from saved state. Saved state is invalid.")
         end

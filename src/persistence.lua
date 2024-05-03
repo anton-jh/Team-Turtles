@@ -53,8 +53,10 @@ end
 
 
 function LoadTurnFile()
-    local unfinished = nil
+    local lastTurn = nil
+    local lastTurnCompleted = true
     local turns = 0
+
     if fs.exists(Filenames.turnFile) then
         local handle = fs.open(Filenames.turnFile, "r")
         local line = nil
@@ -62,14 +64,16 @@ function LoadTurnFile()
             line = handle.readLine()
             if line == "ok" then
                 turns = turns + 1
-                unfinished = nil
+                lastTurnCompleted = true
             elseif line ~= nil then
-                unfinished = line
+                lastTurn = line
+                lastTurnCompleted = false
             end
         until line == nil
         handle.close()
     end
-    return unfinished and textutils.unserialize(unfinished) or turns
+
+    return turns, lastTurn and textutils.unserialize(lastTurn), lastTurnCompleted
 end
 
 

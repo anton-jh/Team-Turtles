@@ -64,7 +64,10 @@ function StartTurn()
     end
     local any, data = turtle.inspect()
     TurnFile.writeLine(textutils.serialize({
+        step = CompletedSteps + 1,
         blockInfront = any and data.name or nil
+    }, {
+        compact = true
     }))
 end
 

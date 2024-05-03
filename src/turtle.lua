@@ -25,14 +25,14 @@ function RunTurtle(arg)
         local steps = ActivePhase.generateSteps(PhaseArgs)
         local nSteps = #steps
 
-        if not Resuming then
-            CompletedSteps = 0
-        else
+        if Resuming then
             Resuming = false
-        end
-        if ActivePhase.name == Phase.working.name then
+        elseif ActivePhase.name == Phase.working.name then
             CompletedSteps = LayerProgress or 0
+        else
+            CompletedSteps = 0
         end
+        
 
         while CompletedSteps < nSteps do
             local newPhase, newPhaseArgs = steps[CompletedSteps + 1]()
