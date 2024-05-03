@@ -109,6 +109,8 @@ function Phase.outbound.generateSteps(args)
         table.insert(steps, Project.workingSide == WorkingSide.right and Right or Left)
     end
 
+    FetchProject(Project.serverAddress)
+
     for _ = args.from + 1, AssignedLayer do
         table.insert(steps, Forward)
     end
