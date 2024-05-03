@@ -46,3 +46,18 @@ function BroadcastFatalError(msg, printError)
     end
     error(msg)
 end
+
+function BroadcastLost(reason)
+    term.clear()
+    print("I got lost. (Reason: " .. reason .. ") Please:")
+    print("- Place me at the spawn")
+    print("- Terminate the program")
+    print("- Rejoin the project with \"" .. shell.getRunningProgram() .. " " .. Project.serverAddress .. "\"")
+    local location = "basecamp"
+    if ActivePhase.name == Phase.working.name or ActivePhase.name == Phase.backtracking.name or ActivePhase.name == Phase.resuming.name then
+        location = "layer " .. AssignedLayer
+    elseif ActivePhase.name == Phase.inbound or ActivePhase.name == Phase.outbound.name then
+        location = "corridor"
+    end
+    BroadcastFatalError("Lost at " .. location .. ".", false)
+end

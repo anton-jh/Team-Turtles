@@ -28,17 +28,7 @@ function Resume(steps)
 
     if not lastTurnCompleted then
         if blockInfront == lastTurn.blockInfront then
-            print("I got lost while turning. Please:")
-            print("- Place me at the spawn")
-            print("- Terminate the program")
-            print("- Rejoin the project (server id: " .. Project.serverAddress .. ")")
-            local location = "basecamp"
-            if ActivePhase.name == Phase.working.name or ActivePhase.name == Phase.backtracking.name then
-                location = "layer " .. AssignedLayer
-            elseif ActivePhase.name == Phase.inbound or ActivePhase.name == Phase.outbound.name then
-                location = "corridor"
-            end
-            BroadcastFatalError("Lost at " .. location .. ".", false)
+            BroadcastLost("1")
         else
             lastTurnCompleted = true
         end
@@ -52,7 +42,7 @@ function Resume(steps)
         if IsMove(steps[step]) then
             foundMoves = foundMoves + 1
         elseif steps[step] == nil then
-            BroadcastFatalError("Cannot resume from saved state. Turtle has consumed more fuel than expected.")
+            BroadcastLost("2")
         end
     end
     print("step after moves: " .. step)
@@ -67,12 +57,12 @@ function Resume(steps)
         step = step + 1
         if IsTurn(steps[step]) then
             if lastTurn and step > lastTurn.step then
-                BroadcastFatalError("Cannot resume from saved state. Saved state is invalid.")
+                BroadcastLost("3")
             end
             foundTurns = foundTurns + 1
             print("found turn, step: " .. step)
         elseif steps[step] == nil or IsMove(steps[step]) then
-            BroadcastFatalError("Cannot resume from saved state. Saved state is invalid.")
+            BroadcastLost("4")
         end
     end
 
