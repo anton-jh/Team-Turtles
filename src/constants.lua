@@ -36,6 +36,6 @@ RefuelPosition = {
     spawn = 2
 }
 
-MinimumNeededFuel = 200
+MinimumNeededFuel = 400
 
 ProjectIdLength = 10
