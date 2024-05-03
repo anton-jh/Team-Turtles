@@ -93,5 +93,3 @@ elseif #Args == 3 then
         RunServer(Args)
     end)
 end
-
--- TODO: clear previous state if starting new session, but preserve project id (or generate random each time if possible? math.random?)
