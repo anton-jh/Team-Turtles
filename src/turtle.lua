@@ -19,6 +19,8 @@ function RunTurtle(arg)
         InitPhase(Phase.outbound, { from = -1 })
     end
 
+    os.setComputerLabel(os.getComputerID() .. "@" .. Project.serverAddress)
+
     while true do
         local steps = ActivePhase.generateSteps(PhaseArgs)
         local nSteps = #steps
