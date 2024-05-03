@@ -100,6 +100,7 @@ function CalculateNeededFuel(from, to)
     neededFuel = neededFuel + Project.height
     neededFuel = neededFuel + Project.height
     neededFuel = neededFuel + Project.width
+    neededFuel = neededFuel + to
     neededFuel = neededFuel + 10
     return neededFuel
 end
