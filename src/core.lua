@@ -93,14 +93,14 @@ FilterFunctions = {
 -- REFUELING --
 
 
-function CalculateNeededFuel()
+function CalculateNeededFuel(from, to)
     local neededFuel = 0
-    neededFuel = neededFuel + AssignedLayer * 2
-    neededFuel = neededFuel + (Project.width * Project.height / 3) * 2
-    neededFuel = neededFuel + Project.height * 2
-    neededFuel = neededFuel + 20
-    neededFuel = math.max(neededFuel, MinimumNeededFuel)
-    print("Needed fuel = " .. neededFuel)
+    neededFuel = neededFuel + to - from
+    neededFuel = neededFuel + Project.width * Project.height / 3
+    neededFuel = neededFuel + Project.height
+    neededFuel = neededFuel + Project.height
+    neededFuel = neededFuel + Project.width
+    neededFuel = neededFuel + 10
     return neededFuel
 end
 
@@ -114,7 +114,7 @@ function Refuel(refuelPosition)
         return turtle.getItemCount() > 0
     end
 
-    local neededFuel = CalculateNeededFuel()
+    local neededFuel = CalculateNeededFuel(refuelPosition == RefuelPosition.spawn and -1 or 0, AssignedLayer) + MinimumNeededFuel
 
     turtle.select(1)
     while turtle.getFuelLevel() < neededFuel do

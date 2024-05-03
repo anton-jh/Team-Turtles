@@ -283,7 +283,7 @@ function Phase.backtracking.generateSteps(args)
         end)
 
         table.insert(steps, function ()
-            if turtle.getFuelLevel() < CalculateNeededFuel() then
+            if turtle.getFuelLevel() < CalculateNeededFuel(prevLayer, AssignedLayer) then
                 return Phase.inbound, { from = prevLayer }
             else
                 return Phase.outbound, { from = prevLayer }
