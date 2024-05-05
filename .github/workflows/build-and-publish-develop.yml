@@ -17,9 +17,5 @@ jobs:
       - name: Install Lua/LuaJIT
         uses: leafo/gh-actions-lua@v10.0.0
 
-      - name: ls debug
-        run: ls -la1
-
       - name: Run build
-        run: lua ./build.lua
-        working-directory: Team-Turtles/develop
+        run: lua ./_build.lua
