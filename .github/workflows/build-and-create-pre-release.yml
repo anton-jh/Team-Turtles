@@ -59,4 +59,13 @@ jobs:
           tag_name: alpha-${{ steps.increment_release_number.outputs.next_number }}
           release_name: Alpha ${{ steps.increment_release_number.outputs.next_number }}
           prerelease: true
-          files: ./build/main.lua
+
+      - name: Upload main.lua as asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_pre_release.outputs.upload_url }}
+          asset_path: ./build/main.lua
+          asset_name: main.lua
+          asset_content_type: text/plain
