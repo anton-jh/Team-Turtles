@@ -17,5 +17,8 @@ jobs:
       - name: Install Lua/LuaJIT
         uses: leafo/gh-actions-lua@v10.0.0
 
-      - name: Run a one-line script
-        run: lua ./*/build.lua
+      - name: Cd into repo
+        run: cd ./*/
+
+      - name: Run build
+        run: lua ./build.lua
