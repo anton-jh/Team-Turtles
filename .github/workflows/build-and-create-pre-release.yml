@@ -1,4 +1,3 @@
-
 name: Build and create pre-release
 
 on:
@@ -19,6 +18,12 @@ jobs:
 
       - name: Run build
         run: lua ./_build.lua
+      
+      - name: Upload main.lua as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: main
+          path: ./build/main.lua
   
   create_pre_release:
     runs-on: ubuntu-latest
@@ -39,6 +44,12 @@ jobs:
           next_number=$((previous_number + 1))
           echo "::set-output name=next_number::$next_number"
 
+      - name: Download main.lua artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: main
+          path: ./build/main.lua
+
       - name: Create pre-release
         id: create_pre_release
         uses: actions/create-release@v1
@@ -48,3 +59,4 @@ jobs:
           tag_name: alpha-${{ steps.increment_release_number.outputs.next_number }}
           release_name: Alpha ${{ steps.increment_release_number.outputs.next_number }}
           prerelease: true
+          files: ./build/main.lua
