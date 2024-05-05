@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_and_create_pre_release:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,18 +18,7 @@ jobs:
 
       - name: Run build
         run: lua ./_build.lua
-      
-      - name: Upload main.lua as artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: main
-          path: ./build/main.lua
-  
-  create_pre_release:
-    runs-on: ubuntu-latest
-    needs: build
 
-    steps:
       - name: Get previous release number
         id: get_previous_release
         run: |
@@ -43,12 +32,6 @@ jobs:
           previous_number=${{ steps.get_previous_release.outputs.previous_number }}
           next_number=$((previous_number + 1))
           echo "::set-output name=next_number::$next_number"
-
-      - name: Download main.lua artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: main
-          path: ./build/main.lua
 
       - name: Create pre-release
         id: create_pre_release
