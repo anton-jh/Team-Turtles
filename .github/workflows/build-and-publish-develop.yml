@@ -1,9 +1,9 @@
-
 name: Build and publish to Pastebin (develop)
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: 
+      - develop
   workflow_dispatch:
 
 jobs:
@@ -41,10 +41,15 @@ jobs:
 
       - name: Create pre-release
         id: create_pre_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/github-script@v4
         with:
-          tag_name: alpha-${{ steps.increment_release_number.outputs.next_number }}
-          release_name: Alpha ${{ steps.increment_release_number.outputs.next_number }}
-          prerelease: true
+          script: |
+            const response = await github.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: 'alpha-' + ${{ steps.increment_release_number.outputs.next_number }},
+              name: 'Alpha ' + ${{ steps.increment_release_number.outputs.next_number }},
+              prerelease: true
+            });
+            console.log(response);
+          github-token: ${{ secrets.GITHUB_TOKEN }}
