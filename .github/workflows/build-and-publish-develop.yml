@@ -18,4 +18,4 @@ jobs:
         uses: leafo/gh-actions-lua@v10.0.0
 
       - name: Run a one-line script
-        run: lua ./build.lua
+        run: lua ./team-turtles/build.lua
