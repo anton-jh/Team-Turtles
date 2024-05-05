@@ -1,5 +1,5 @@
 
-name: Build and publish to Pastebin (develop)
+name: Build and create pre-release
 
 on:
   push:
