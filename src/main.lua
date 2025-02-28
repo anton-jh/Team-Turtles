@@ -46,6 +46,36 @@ function Install()
     writeHandle.close()
 end
 
+function Clear()
+    local programName = shell.getRunningProgram()
+    local startupScript = "shell.run(\"" .. programName .. "\")"
+
+    if fs.exists("startup") then
+        local readHandle = fs.open("startup", "r")
+        local contents = readHandle.readAll()
+        readHandle.close()
+
+        if contents == startupScript then
+            fs.delete("startup")
+        end
+    end
+
+    ClearTurtle()
+    ClearServer()
+end
+
+
+
+-- MAIN --
+
+
+Args = { ... }
+
+if #Args == 1 and Args[1] == "clear" then
+    Clear()
+    return
+end
+
 
 Install()
 
@@ -61,8 +91,6 @@ for _, side in pairs({
     end
 end
 
-
-Args = { ... }
 
 if #Args == 0 then
     print("Turtle resuming in 5 seconds...")
