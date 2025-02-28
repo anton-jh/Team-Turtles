@@ -102,6 +102,8 @@ function CalculateNeededFuel(from, to)
     neededFuel = neededFuel + Project.width
     neededFuel = neededFuel + to
     neededFuel = neededFuel + 10
+
+    print("Needed fuel: " .. neededFuel)
     return neededFuel
 end
 
