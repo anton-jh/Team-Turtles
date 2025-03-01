@@ -117,7 +117,10 @@ function Refuel(refuelPosition)
         return turtle.getItemCount() > 0
     end
 
-    local neededFuel = CalculateNeededFuel(refuelPosition == RefuelPosition.spawn and -1 or 0, AssignedLayer) + MinimumNeededFuel
+    local neededFuel = CalculateNeededFuel(refuelPosition == RefuelPosition.spawn and -1 or 0, AssignedLayer)
+    if neededFuel < MinimumNeededFuel then
+        neededFuel = MinimumNeededFuel
+    end
 
     turtle.select(1)
     while turtle.getFuelLevel() < neededFuel do
